@@ -112,6 +112,9 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.apache.shiro.UnavailableSecurityManagerException;
+import org.jasig.cas.client.validation.Assertion;
+import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
+import org.jasig.cas.client.validation.TicketValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -232,12 +235,19 @@ public class ManagementServiceImpl implements ManagementService {
   protected MailUtils mailUtils;
 
   protected EncryptionService encryptionService;
+  
+  private static final String service = "http://vubuntu:8090/management/token";
+
+	private static final String serverName = "http://vubuntu:8080/cas";
+
+	private Cas20ServiceTicketValidator ticketValidator;
 
   /**
    * Must be constructed with a CassandraClientPool.
    * 
    */
   public ManagementServiceImpl() {
+	  ticketValidator=new Cas20ServiceTicketValidator(serverName);
   }
 
   @Autowired
@@ -1069,6 +1079,24 @@ public class ManagementServiceImpl implements ManagementService {
     return null;
 
   }
+  @Override
+  public UserInfo verifyAdminUserCasToken(String token) throws Exception {
+	  //String name=null;
+	  try {
+			final Assertion assertion = this.ticketValidator.validate(token,
+					service);
+			User user = findUserEntity(MANAGEMENT_APPLICATION_ID, assertion.getPrincipal().getName());
+		    if (user == null) {
+		      return null;
+		    }
+		    return getUserInfo(MANAGEMENT_APPLICATION_ID, user);
+		} catch (TicketValidationException e) {
+		}
+	    logger.info("cas token {} failed", token);
+	    return null;
+  }
+  
+  
 
   @Override
   public UserInfo verifyMongoCredentials(String name, String nonce, String key) throws Exception {
