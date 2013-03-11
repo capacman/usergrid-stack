@@ -173,6 +173,7 @@ public class ManagementResource extends AbstractContextResource {
                 }
             } else if (ticket!=null && !ticket.isEmpty()){
             	user=management.verifyAdminUserCasToken(ticket);
+            	logger.info("user ticket: {}", ticket);
             	if (user != null) {
                     logger.info("found user from verify: {}", user.getUuid());
                 }

@@ -1087,6 +1087,7 @@ public class ManagementServiceImpl implements ManagementService {
 					service);
 			User user = findUserEntity(MANAGEMENT_APPLICATION_ID, assertion.getPrincipal().getName());
 		    if (user == null) {
+		    	logger.info("user not found for principal name {}",assertion.getPrincipal().getName());
 		      return null;
 		    }
 		    return getUserInfo(MANAGEMENT_APPLICATION_ID, user);
