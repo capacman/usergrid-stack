@@ -237,8 +237,6 @@ public class ManagementServiceImpl implements ManagementService {
 
 	protected EncryptionService encryptionService;
 
-	private static final String service = "http://vubuntu:8090/management/token";
-
 	private static final String serverName = "http://vubuntu:8080/cas";
 
 	private Cas20ServiceTicketValidator ticketValidator;
@@ -1216,7 +1214,8 @@ public class ManagementServiceImpl implements ManagementService {
 	}
 
 	@Override
-	public UserInfo verifyAdminUserCasToken(String token) throws Exception {
+	public UserInfo verifyAdminUserCasToken(String token, String service)
+			throws Exception {
 		try {
 			final Assertion assertion = this.ticketValidator.validate(token,
 					service);

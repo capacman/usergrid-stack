@@ -296,7 +296,7 @@ public interface ManagementService {
 	public boolean verifyAdminUserPassword(UUID userId, String password)
 			throws Exception;
 	
-	public UserInfo verifyAdminUserCasToken(String token) throws Exception;
+	public UserInfo verifyAdminUserCasToken(String token,String service) throws Exception;
 
 	public UserInfo verifyAdminUserPasswordCredentials(String name,
 			String password) throws Exception;
