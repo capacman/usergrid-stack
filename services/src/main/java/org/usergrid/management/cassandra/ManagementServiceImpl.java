@@ -247,7 +247,7 @@ public class ManagementServiceImpl implements ManagementService {
 	public ManagementServiceImpl() {
 		
 	}
-	@Value("#{usergrid.authentication.host}")
+	@Value("#{properties['usergrid.authentication.host']}")
 	public void setServerName(String serverName) {
 		this.ticketValidator = new Cas20ServiceTicketValidator(serverName);
 	}
