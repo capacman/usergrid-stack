@@ -83,6 +83,7 @@
 		<module>count-common</module>
 		<module>count-batcher</module>
 		<module>count-inserter</module>
+		<module>usergrid-dashboard</module>
 	</modules>
 
 

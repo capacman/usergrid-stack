@@ -118,6 +118,7 @@ import org.jasig.cas.client.validation.TicketValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.usergrid.locking.Lock;
 import org.usergrid.locking.LockManager;
 import org.usergrid.management.AccountCreationProps;
@@ -237,8 +238,6 @@ public class ManagementServiceImpl implements ManagementService {
 
 	protected EncryptionService encryptionService;
 
-	private static final String serverName = "http://vubuntu:8080/cas";
-
 	private Cas20ServiceTicketValidator ticketValidator;
 
 	/**
@@ -246,7 +245,11 @@ public class ManagementServiceImpl implements ManagementService {
 	 * 
 	 */
 	public ManagementServiceImpl() {
-		ticketValidator = new Cas20ServiceTicketValidator(serverName);
+		
+	}
+	@Value("#{usergrid.authentication.host}")
+	public void setServerName(String serverName) {
+		this.ticketValidator = new Cas20ServiceTicketValidator(serverName);
 	}
 
 	@Autowired

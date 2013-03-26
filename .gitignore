@@ -9,6 +9,7 @@ build
 .classpath
 .project
 .settings
+.springBeans
 out
 *.svn
 *.ipr
