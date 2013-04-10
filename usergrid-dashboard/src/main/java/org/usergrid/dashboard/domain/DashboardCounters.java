@@ -1,4 +1,4 @@
-package org.usergrid.dashboard;
+package org.usergrid.dashboard.domain;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
