@@ -31,7 +31,7 @@ import org.usergrid.dashboard.service.DashboardService;
  *
  * @author capacman
  */
-@Path("/system")
+@Path("/dashboard")
 @Component
 @Scope("singleton")
 @Produces({MediaType.APPLICATION_JSON, "application/javascript",
