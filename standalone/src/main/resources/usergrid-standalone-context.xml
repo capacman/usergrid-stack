@@ -27,6 +27,7 @@
 		factory-method="getInstance" init-method="springInit" />
 
 	<import resource="classpath:/usergrid-rest-context.xml" />
+        <import resource="classpath:/dashboard-context.xml" />
 
 
 
