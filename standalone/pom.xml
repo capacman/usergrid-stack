@@ -462,5 +462,10 @@
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 		</dependency>
+                <dependency>
+                    <groupId>org.usergrid</groupId>
+                    <artifactId>usergrid-dashboard</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
 	</dependencies>
 </project>
