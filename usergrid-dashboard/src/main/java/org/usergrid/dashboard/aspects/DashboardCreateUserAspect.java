@@ -5,6 +5,8 @@ import java.util.UUID;
 
 
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.usergrid.management.ApplicationInfo;
 import org.usergrid.persistence.EntityManager;
 import org.usergrid.persistence.Schema;
@@ -13,6 +15,7 @@ import org.usergrid.persistence.entities.User;
 
 public class DashboardCreateUserAspect {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(DashboardCreateUserAspect.class);
     private DashboardService dashboardService;
 
     public void setDashboardService(DashboardService dashboardService) {
@@ -21,7 +24,7 @@ public class DashboardCreateUserAspect {
 
     public Object applyTrace(ProceedingJoinPoint pjp) throws Throwable {
         boolean user = false;
-        boolean success = false;
+        boolean success = true;
 
         if (pjp.getArgs()[0] instanceof String
                 && pjp.getArgs()[0].equals(Schema.getDefaultSchema()
@@ -34,7 +37,7 @@ public class DashboardCreateUserAspect {
                 .getEntityType(User.class))) {
             user = true;
         }
-
+        LOGGER.info("appllyTrace for {} with user {}", pjp.toLongString(), user);
         try {
             return pjp.proceed();
         } catch (Exception e) {
@@ -46,7 +49,11 @@ public class DashboardCreateUserAspect {
                 Application application = em.getApplication();
                 ApplicationInfo info = new ApplicationInfo(
                         application.getUuid(), application.getName());
-                dashboardService.appUserCreated(info);
+                try {
+                    dashboardService.appUserCreated(info);
+                } catch (Exception e) {
+                    LOGGER.error("user count cant be updated", e);
+                }
             }
         }
     }

@@ -30,18 +30,29 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "USERGRID_APPLICATION_PROPERTIES")
-public class ApplicationProperty implements Serializable {
+public class UsergridApplicationProperties implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Basic
-    @Column(updatable = false, nullable = false, unique = true, length = 30, name = "APPLICATION_UUID")
+    @Column(updatable = false, nullable = false, unique = true, length = 40, name = "APPLICATION_UUID")
     private String uuid;
     @Basic
     @Column(updatable = true, nullable = false, unique = false, length = 500, name = "APPLICATION_NAME")
     private String name;
+    @Basic
+    @Column(updatable = true, nullable = false, unique = false, name = "APPLICATION_USER_COUNT")
+    private Long userCount;
+
+    public Long getUserCount() {
+        return userCount;
+    }
+
+    public void setUserCount(Long userCount) {
+        this.userCount = userCount;
+    }
 
     public String getUuid() {
         return uuid;

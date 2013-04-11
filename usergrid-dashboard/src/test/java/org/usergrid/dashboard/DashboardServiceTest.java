@@ -1,23 +1,34 @@
 package org.usergrid.dashboard;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.UUID;
 import org.usergrid.dashboard.service.DashboardService;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.AfterClass;
+import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.usergrid.dashboard.domain.UsergridCounter;
 import org.usergrid.management.ManagementService;
 import org.usergrid.management.ManagementTestHelper;
 import org.usergrid.management.OrganizationOwnerInfo;
 import org.usergrid.management.cassandra.ManagementTestHelperImpl;
+import org.usergrid.persistence.Entity;
+import org.usergrid.persistence.EntityManager;
 import org.usergrid.persistence.TypedEntity;
+import org.usergrid.persistence.cassandra.EntityManagerFactoryImpl;
 import org.usergrid.persistence.entities.User;
+import org.usergrid.services.ServiceManager;
+import org.usergrid.services.ServiceManagerFactory;
 
 public class DashboardServiceTest {
 
@@ -26,6 +37,16 @@ public class DashboardServiceTest {
     static ManagementTestHelper helper;
     static ManagementService management;
     static DashboardService dashboardService;
+    private final EntityManagerFactoryImpl emf;
+    private final ServiceManagerFactory smf;
+    @Autowired
+    protected Properties properties;
+
+    public DashboardServiceTest() {
+        this.emf = (EntityManagerFactoryImpl) helper.getEntityManagerFactory();
+        this.smf = new ServiceManagerFactory(emf, properties);
+        this.smf.setApplicationContext(helper.getApplicationContext());
+    }
 
     @BeforeClass
     public static void setup() throws Exception {
@@ -72,7 +93,22 @@ public class DashboardServiceTest {
                 getUniqueEmail(), getUniqueString(), true, false);
         assertEquals(1 + initialAdminUserCount,
                 getDashboardCounter(DashboardService.ADMINUSER_COUNTER));
-        logger.info(dashboardService.getDashboardCounters().toString());
+
+    }
+
+    @Test
+    public void countAdminUserFailTest() throws Exception {
+        Long initialAdminUserCount = getDashboardCounter(DashboardService.ADMINUSER_COUNTER);
+        String userName = getUniqueString();
+        try {
+            management.createAdminUser(userName, getUniqueString(),
+                    getUniqueEmail(), getUniqueString(), true, false);
+            management.createAdminUser(userName, getUniqueString(),
+                    getUniqueEmail(), getUniqueString(), true, false);
+        } catch (Exception e) {
+        }
+        assertEquals(1 + initialAdminUserCount,
+                getDashboardCounter(DashboardService.ADMINUSER_COUNTER));
     }
 
     @Test
@@ -91,10 +127,31 @@ public class DashboardServiceTest {
     }
 
     @Test
+    public void countApplicationFailTest() throws Exception {
+        long initialApplicationUserCount = getDashboardCounter(DashboardService.APPLICATIONS_COUNTER);
+        OrganizationOwnerInfo organization = management
+                .createOwnerAndOrganization(getUniqueString(),
+                getUniqueString(), getUniqueString(), getUniqueEmail(),
+                getUniqueString());
+
+        String appName = getUniqueString();
+        try {
+            management.createApplication(organization.getOrganization().getUuid(),
+                    appName);
+            management.createApplication(organization.getOrganization().getUuid(),
+                    appName);
+        } catch (Exception e) {
+        }
+
+        assertEquals(1 + initialApplicationUserCount,
+                getDashboardCounter(DashboardService.APPLICATIONS_COUNTER));
+    }
+
+    @Test
     public void countOrganizationTest() throws Exception {
         long initialOrganizationCount = getDashboardCounter(DashboardService.ORGANIZATIONS_COUNTER);
         String uniqueString = getUniqueString();
-        System.out.println(uniqueString);
+
         management.createOwnerAndOrganization(uniqueString, getUniqueString(),
                 getUniqueString(), getUniqueEmail(), getUniqueString());
         assertEquals(1 + initialOrganizationCount,
@@ -102,7 +159,44 @@ public class DashboardServiceTest {
     }
 
     @Test
+    public void countOrganizationFailTest() throws Exception {
+        long initialOrganizationCount = getDashboardCounter(DashboardService.ORGANIZATIONS_COUNTER);
+        String uniqueString = getUniqueString();
+        try {
+            management.createOwnerAndOrganization(uniqueString, getUniqueString(),
+                    getUniqueString(), getUniqueEmail(), getUniqueString());
+            management.createOwnerAndOrganization(uniqueString, getUniqueString(),
+                    getUniqueString(), getUniqueEmail(), getUniqueString());
+        } catch (Exception e) {
+        }
+        assertEquals(1 + initialOrganizationCount,
+                getDashboardCounter(DashboardService.ORGANIZATIONS_COUNTER));
+    }
+
+    @Test
     public void testUserAssign() {
         assertTrue(TypedEntity.class.isAssignableFrom(User.class));
+    }
+
+    @Test
+    public void testUserCreate() throws Exception {
+        UUID applicationId = emf.createApplication("testOrganization",
+                "testPermissions");
+        assertNotNull(applicationId);
+
+        ServiceManager sm = smf.getServiceManager(applicationId);
+        assertNotNull(sm);
+
+        EntityManager em = sm.getEntityManager();
+        assertNotNull(em);
+
+        Map<String, Object> properties = new LinkedHashMap<String, Object>();
+        properties.put("username", "edanuff");
+        properties.put("email", "ed@anuff.com");
+
+        int initialSize = dashboardService.getApplicationProperties().size();
+        Entity user = em.create("user", properties);
+        assertNotNull(user);
+        assertEquals(initialSize + 1, dashboardService.getApplicationProperties().size());
     }
 }

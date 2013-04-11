@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.usergrid.dashboard.domain.UsergridApplicationProperties;
 import org.usergrid.dashboard.domain.UsergridCounter;
 import org.usergrid.management.ApplicationInfo;
 import org.usergrid.management.OrganizationInfo;
@@ -59,7 +60,19 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public void appUserCreated(ApplicationInfo applicationInfo) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int count = updateApplicationCounter(applicationInfo);
+        if (count <= 0) {
+            UsergridApplicationProperties uap = new UsergridApplicationProperties();
+            uap.setName(applicationInfo.getName());
+            uap.setUserCount(0L);
+            uap.setUuid(applicationInfo.getId().toString());
+            try {
+                em.persist(uap);
+            } catch (DataIntegrityViolationException e) {
+                logger.warn("appProperty for {} already created", applicationInfo.getId());
+            }
+            updateApplicationCounter(applicationInfo);
+        }
     }
 
     private void checkAndUpdate(String counterName) {
@@ -83,5 +96,30 @@ public class DashboardServiceImpl implements DashboardService {
         } catch (DataIntegrityViolationException e) {
             logger.warn("counter {} already created", counterName);
         }
+    }
+
+    private int updateApplicationCounter(ApplicationInfo applicationInfo) {
+        Query query = em.createQuery("UPDATE UsergridApplicationProperties c SET c.userCount=c.userCount+1 WHERE c.uuid=:uuid");
+        query.setParameter("uuid", applicationInfo.getId().toString());
+        int count = query.executeUpdate();
+        return count;
+    }
+
+    @Override
+    public List<UsergridApplicationProperties> getApplicationProperties() {
+        Query query = em.createQuery("SELECT ap FROM UsergridApplicationProperties ap ");
+        return query.getResultList();
+    }
+
+    @Override
+    public List<UsergridApplicationProperties> getDashboardCountersOrderByCount(Integer start, Integer end) {
+        Query query = em.createQuery("select ap from UsergridApplicationProperties ap ORDER BY ap.userCount");
+        if (start != null) {
+            query.setFirstResult(start);
+            if (end != null && end > start) {
+                query.setMaxResults(end);
+            }
+        }
+        return query.getResultList();
     }
 }
