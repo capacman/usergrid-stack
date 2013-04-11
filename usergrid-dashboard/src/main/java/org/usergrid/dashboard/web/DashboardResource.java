@@ -16,6 +16,7 @@
 package org.usergrid.dashboard.web;
 
 import java.util.List;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -42,11 +43,13 @@ public class DashboardResource {
     @Autowired
     private DashboardService dashboardService;
 
+    @GET
     @Path("counters")
     public List<UsergridCounter> getDashboardCounters() {
         return dashboardService.getDashboardCounters();
     }
 
+    @GET
     @Path("appsProperties")
     public List<UsergridApplicationProperties> getApplicationProperties(@QueryParam("start") Integer start, @QueryParam("start") Integer end) {
         return dashboardService.getDashboardCountersOrderByCount(start, end);
