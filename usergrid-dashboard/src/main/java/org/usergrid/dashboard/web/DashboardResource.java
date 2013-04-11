@@ -17,8 +17,12 @@ package org.usergrid.dashboard.web;
 
 import java.util.List;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.usergrid.dashboard.domain.UsergridApplicationProperties;
 import org.usergrid.dashboard.domain.UsergridCounter;
 import org.usergrid.dashboard.service.DashboardService;
@@ -27,7 +31,12 @@ import org.usergrid.dashboard.service.DashboardService;
  *
  * @author capacman
  */
-@Path("/dashboard")
+@Path("/system")
+@Component
+@Scope("singleton")
+@Produces({MediaType.APPLICATION_JSON, "application/javascript",
+    "application/x-javascript", "text/ecmascript",
+    "application/ecmascript", "text/jscript"})
 public class DashboardResource {
 
     @Autowired

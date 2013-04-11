@@ -43,7 +43,7 @@
     <bean id="dashboardService" class="org.usergrid.dashboard.service.DashboardServiceImpl">
         <property name="entityManager" ref="jpaEntityManager"/>
     </bean>
-    <bean id="dahboardResource" class="org.usergrid.dashboard.web.DashboardResource"/>
+    <context:component-scan base-package="org.usergrid.dashboard.web"/>
     <aop:config>
         <aop:pointcut id="dashboardServiceTransaction" expression="execution(* org.usergrid.dashboard.service.DashboardService.*(..))"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="dashboardServiceTransaction"/>
