@@ -37,7 +37,7 @@ public class DashboardCreateUserAspect {
                 .getEntityType(User.class))) {
             user = true;
         }
-        LOGGER.info("appllyTrace for {} with user {}", pjp.toLongString(), user);
+        LOGGER.debug("appllyTrace for {} with user {}", pjp.toLongString(), user);
         try {
             return pjp.proceed();
         } catch (Exception e) {
