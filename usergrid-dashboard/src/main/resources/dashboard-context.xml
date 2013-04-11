@@ -49,7 +49,7 @@
         <aop:advisor advice-ref="txAdvice" pointcut-ref="dashboardServiceTransaction"/>
         <aop:aspect id="managementServiceParticipant" ref="managementServiceAspect">
             <aop:pointcut id="managementServicePointcut"
-                          expression="execution(* org.usergrid.management.ManagementService.*(..))" />
+                          expression="execution(* org.usergrid.management.cassandra.ManagementServiceImpl.*(..))" />
             <aop:around pointcut-ref="managementServicePointcut" method="applyTrace" />
         </aop:aspect>
         <aop:aspect id="createUserParticipant" ref="createUserAspect">
