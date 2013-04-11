@@ -15,7 +15,6 @@ import org.usergrid.management.OrganizationOwnerInfo;
 import org.usergrid.management.UserInfo;
 
 public class DashboardManagementServiceAspect {
-
     private static enum TraceOperation {
 
         ADMIN("createAdminUser", "createAdminFrom",
@@ -59,7 +58,7 @@ public class DashboardManagementServiceAspect {
     private DashboardService dashboardService;
 
     public Object applyTrace(ProceedingJoinPoint pjp) throws Throwable {
-
+	logger.info("managementService trace for {}",pjp.toLongString());
         Object returnObject = pjp.proceed();
         try {
             if (pjp.getSignature() instanceof MethodSignature) {

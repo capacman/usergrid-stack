@@ -27,27 +27,27 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public void applicationCreated(ApplicationInfo applicationInfo) {
-        logger.debug("application {} created", applicationInfo.getName());
+        logger.info("application {} created", applicationInfo.getName());
         checkAndUpdate(APPLICATIONS_COUNTER);
     }
 
     @Override
     public void organizationCreated(OrganizationInfo organizationInfo) {
-        logger.debug("organization {} created", organizationInfo.getName());
+        logger.info("organization {} created", organizationInfo.getName());
         checkAndUpdate(ORGANIZATIONS_COUNTER);
     }
 
     @Override
     public void organizationOwnerCreated(
             OrganizationOwnerInfo organizationOwnerInfo) {
-        logger.debug("organization {} and admin {} created", organizationOwnerInfo.getOrganization().getName(), organizationOwnerInfo.getOwner().getName());
+        logger.info("organization {} and admin {} created", organizationOwnerInfo.getOrganization().getName(), organizationOwnerInfo.getOwner().getName());
         checkAndUpdate(ADMINUSER_COUNTER);
         checkAndUpdate(ORGANIZATIONS_COUNTER);
     }
 
     @Override
     public void adminUserCreated(UserInfo userInfo) {
-        logger.debug("adminUser {} created", userInfo.getName());
+        logger.info("adminUser {} created", userInfo.getName());
         checkAndUpdate(ADMINUSER_COUNTER);
     }
 
@@ -64,7 +64,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public void appUserCreated(ApplicationInfo applicationInfo) {
-        logger.debug("user created for application {} ", applicationInfo.getName());
+        logger.info("user created for application {} ", applicationInfo.getName());
         int count = updateApplicationCounter(applicationInfo);
         if (count <= 0) {
             UsergridApplicationProperties uap = new UsergridApplicationProperties();
