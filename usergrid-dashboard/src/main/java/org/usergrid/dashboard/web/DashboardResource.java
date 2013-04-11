@@ -27,7 +27,7 @@ import org.usergrid.dashboard.service.DashboardService;
  *
  * @author capacman
  */
-@Path("dashboard")
+@Path("/dashboard")
 public class DashboardResource {
 
     @Autowired
