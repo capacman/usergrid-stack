@@ -39,3 +39,5 @@ tools/management.wadl
 core/src/main/java/QueryFilter.tokens
 *.log
 /release.properties
+rest
+*.jdbc
